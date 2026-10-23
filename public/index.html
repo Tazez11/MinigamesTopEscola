@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MiniGames</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/tokens.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/games/stop/stop.css">
+    <link rel="stylesheet" href="/games/draw/draw.css">
+     <link rel="stylesheet" href="/games/character/character.css">
+     <link rel="stylesheet" href="/games/impostor/impostor.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <span class="logo">MiniGames</span>
+      <nav class="nav">
+        <a href="#jogos">Jogos</a>
+        <button id="btn-entrar" class="btn btn-ghost">Entrar</button>
+        <div id="user-chip" class="user-chip" hidden>
+          <button id="btn-perfil" class="avatar" aria-label="Meu perfil"></button>
+          <span id="user-name"></span>
+          <button id="btn-sair" class="btn btn-ghost">Sair</button>
+        </div>
+      </nav>
+    </header>
+
+    <div id="home-view">
+      <section class="hero">
+        <h1>Jogue com seus amigos, direto no navegador.</h1>
+        <p>Crie uma sala, mande o código e comece a partida em segundos.</p>
+        <div class="hero-actions">
+          <button id="btn-criar-sala" class="btn btn-primary">Criar sala</button>
+          <button id="btn-entrar-codigo" class="btn btn-ghost">Entrar com código</button>
+        </div>
+      </section>
+
+      <section id="jogos" class="grid-games">
+        <article class="card card-game" style="--game-color: var(--game-stop)">
+          <h3>Stop</h3>
+          <p>Complete as categorias antes dos outros.</p>
+        </article>
+        <article class="card card-game" style="--game-color: var(--game-character)">
+          <h3>Adivinhe o personagem</h3>
+          <p>Descubra o personagem a partir das pistas.</p>
+        </article>
+        <article class="card card-game" style="--game-color: var(--game-draw)">
+          <h3>Desenhe e adivinhe</h3>
+          <p>Um desenha, todos tentam acertar.</p>
+        </article>
+        <article class="card card-game" style="--game-color: var(--game-impostor)">
+          <h3>Impostor</h3>
+          <p>Descubra quem é o impostor antes que ele vença.</p>
+        </article>
+      </section>
+    </div>
+
+    <section id="room-view" hidden>
+      <div class="room-top">
+        <div>
+          <h1 id="room-title"></h1>
+          <p id="room-count" class="muted-left"></p>
+        </div>
+        <button id="room-leave" class="btn btn-ghost">Sair da sala</button>
+      </div>
+
+      <div class="card room-code-card">
+        <div>
+          <span class="muted-left">Código da sala</span>
+          <strong id="room-code" class="room-code"></strong>
+        </div>
+        <button id="room-copy" class="btn btn-primary">Copiar código</button>
+      </div>
+
+            <div id="room-lobby">
+        <h2 class="section-title">Jogo</h2>
+        <div id="room-games" class="game-picker"></div>
+        <p id="room-game-hint" class="muted-left game-hint"></p>
+        <button id="room-start" class="btn btn-primary room-start">Iniciar partida</button>
+      </div>
+
+      <div id="room-game" class="card game-panel" hidden>
+        <h2 id="room-game-title" class="section-title"></h2>
+                <div id="game-stage"></div>
+        <button id="room-end-game" class="btn btn-ghost">Encerrar partida</button>
+      </div>
+
+      <ul id="room-players" class="players"></ul>
+    </section>
+  </div>
+
+  <dialog id="auth-modal" class="modal">
+    <form id="auth-form" class="modal-body">
+      <div class="tabs" role="tablist">
+        <button type="button" class="tab active" data-mode="login" role="tab">Entrar</button>
+        <button type="button" class="tab" data-mode="register" role="tab">Criar conta</button>
+      </div>
+      <label class="field">
+        <span>Usuário</span>
+        <input name="username" autocomplete="username" required>
+      </label>
+      <label class="field">
+        <span>Senha</span>
+        <input name="password" type="password" autocomplete="current-password" required>
+      </label>
+      <p id="auth-msg" class="form-msg" role="alert"></p>
+      <div class="modal-actions">
+        <button type="button" id="auth-cancel" class="btn btn-ghost">Cancelar</button>
+        <button type="submit" id="auth-submit" class="btn btn-primary">Entrar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="profile-modal" class="modal">
+    <form id="profile-form" class="modal-body" novalidate>
+      <div id="profile-preview" class="avatar avatar-lg"></div>
+      <h2 id="profile-name"></h2>
+      <p id="profile-info" class="muted"></p>
+      <label class="field">
+        <span>Link da foto (opcional)</span>
+        <input id="profile-url" placeholder="https://...">
+      </label>
+      <p id="profile-msg" class="form-msg" role="alert"></p>
+      <div class="modal-actions">
+        <button type="button" id="profile-cancel" class="btn btn-ghost">Cancelar</button>
+        <button type="submit" id="profile-save" class="btn btn-primary">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="join-modal" class="modal">
+    <form id="join-form" class="modal-body" novalidate>
+      <h2>Entrar com código</h2>
+      <label class="field">
+        <span>Código da sala</span>
+        <input id="join-code" class="code-input" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="K7M2Q">
+      </label>
+      <p id="join-msg" class="form-msg" role="alert"></p>
+      <div class="modal-actions">
+        <button type="button" id="join-cancel" class="btn btn-ghost">Cancelar</button>
+        <button type="submit" id="join-submit" class="btn btn-primary">Entrar</button>
+      </div>
+    </form>
+  </dialog>
+
+    <div id="conn-banner" class="conn-banner" role="status" hidden>Conexão perdida. Reconectando…</div>
+
+  <div id="toast" class="toast" role="status"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/avatar.js"></script>
+  <script src="/js/toast.js"></script>
+  <script src="/js/auth-modal.js"></script>
+  <script src="/js/profile.js"></script>
+    <script src="/games/stop/stop.js"></script>
+    <script src="/games/draw/draw.js"></script>
+    <script src="/games/character/character.js"></script>
+    <script src="/games/impostor/impostor.js"></script>
+    <script src="/js/rooms-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+:root {
+    --game-stop: #22D3A6;
+  --game-character: #FF5C7A;
+  --game-draw: #FFB84D;
+  --game-phone: #38BDF8;
+  --game-impostor: #38BDF8; 
+  /* Cores */
+  --bg: #0F1020;
+  --surface: #1A1B33;
+  --surface-2: #24254A;
+  --primary: #7C5CFF;
+  --success: #22D3A6;
+  --accent: #FFB84D;
+  --danger: #FF5C7A;
+  --text: #F2F3FF;
+  --text-muted: #A6A8C8;
+
+  /* Tipografia */
+  --font-title: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Espaçamento (escala fixa) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 40px;
+
+  /* Bordas e animação */
+  --radius: 14px;
+  --speed: 180ms;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+}
+
+h1, h2, h3 {
+  font-family: var(--font-title);
+}

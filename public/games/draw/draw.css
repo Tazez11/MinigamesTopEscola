@@ -1,0 +1,306 @@
+.draw { display: grid; gap: var(--space-3); width: 100%; }
+.draw [hidden] { display: none !important; }
+
+.draw .icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.draw-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.draw-round { display: block; font: 700 1.25rem var(--font-title); }
+.draw-time { font: 700 2rem var(--font-title); font-variant-numeric: tabular-nums; }
+.draw.urgent .draw-time { color: var(--danger); }
+
+.draw-bar { height: 8px; border-radius: 999px; background: var(--bg); overflow: hidden; }
+.draw-bar-fill {
+  height: 100%;
+  background: var(--game-draw);
+  transform-origin: left;
+  transition: transform 250ms linear;
+}
+.draw.urgent .draw-bar-fill { background: var(--danger); }
+
+.draw-body { display: grid; gap: var(--space-3); }
+.draw-heading { margin: 0; font-size: 1.5rem; }
+.draw-note { margin: 0; color: var(--text-muted); }
+.draw-winner { margin: 0; font: 700 1.5rem var(--font-title); color: var(--accent); }
+
+/* Categorias de palavras (liga/desliga) */
+.draw-cats { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.draw-chip {
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font: 600 0.95rem var(--font-body);
+  cursor: pointer;
+  transition: background var(--speed), border-color var(--speed), color var(--speed), transform var(--speed);
+}
+.draw-chip:hover:not(:disabled) { background: rgba(255, 184, 77, 0.18); }
+.draw-chip:active:not(:disabled) { transform: scale(0.96); }
+.draw-chip:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.draw-chip:disabled { cursor: default; }
+.draw-chip[aria-pressed='true'] {
+  background: rgba(255, 184, 77, 0.15);
+  border-color: var(--game-draw);
+  color: var(--text);
+}
+
+/* Escolha da palavra */
+.draw-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: var(--space-3); }
+.draw-option {
+  display: grid;
+  gap: var(--space-1);
+  min-height: 96px;
+  padding: var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  color: var(--text);
+  text-align: left;
+  font: 700 1.25rem var(--font-title);
+  cursor: pointer;
+  transition: border-color var(--speed), transform var(--speed), background var(--speed);
+}
+.draw-option:hover:not(:disabled) { border-color: var(--game-draw); transform: translateY(-2px); }
+.draw-option:active:not(:disabled) { transform: scale(0.98); }
+.draw-option:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.draw-option:disabled { opacity: 0.6; cursor: default; }
+.draw-option-cat { color: var(--text-muted); font: 400 0.85rem var(--font-body); }
+
+/* Palavra (desenhista) e dica (demais jogadores) */
+.draw-word { font: 700 2.5rem var(--font-title); color: var(--accent); overflow-wrap: anywhere; }
+.draw-pattern {
+  font: 700 2rem var(--font-title);
+  letter-spacing: 0.3em;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Área de jogo: quadro + (placar e chat) */
+.draw-play { display: grid; gap: var(--space-3); }
+.draw-board-wrap { display: grid; gap: var(--space-3); min-width: 0; }
+.draw-side { display: grid; gap: var(--space-3); min-width: 0; align-content: start; }
+
+@media (min-width: 900px) {
+  .draw-play.has-board { grid-template-columns: minmax(0, 1fr) 320px; align-items: start; }
+}
+
+/* Quadro de desenho */
+.draw-canvas-wrap { position: relative; }
+.draw-canvas,
+.draw-preview {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius);
+}
+.draw-canvas {
+  background: #ffffff;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.draw-canvas.can-draw { cursor: crosshair; }
+.draw-preview { position: absolute; inset: 0; pointer-events: none; }
+
+/* Ferramentas */
+.draw-tools { display: grid; gap: var(--space-2); }
+.draw-colors { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.draw-tool-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+
+.draw-color {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  background: var(--swatch);
+  cursor: pointer;
+  transition: transform var(--speed), box-shadow var(--speed);
+}
+.draw-color:hover { transform: scale(1.08); }
+.draw-color:active { transform: scale(0.94); }
+.draw-color:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+.draw-color[aria-pressed='true'] { box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--text); }
+
+/* Seletor de cor livre (janela de cores do navegador) */
+.draw-picker-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: 0 var(--space-3) 0 6px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text);
+  font: 600 0.9rem var(--font-body);
+  cursor: pointer;
+  transition: background var(--speed);
+}
+.draw-picker-wrap:hover { background: rgba(255, 184, 77, 0.18); }
+.draw-picker-wrap:focus-within { outline: 2px solid var(--primary); outline-offset: 2px; }
+.draw-picker {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.draw-picker::-webkit-color-swatch-wrapper { padding: 0; }
+.draw-picker::-webkit-color-swatch { border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 50%; }
+.draw-picker::-moz-color-swatch { border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 50%; }
+
+/* Botões de ferramenta (ícone + nome) */
+.draw-tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text);
+  font: 600 0.9rem var(--font-body);
+  cursor: pointer;
+  transition: background var(--speed), border-color var(--speed), transform var(--speed);
+}
+.draw-tool:hover { background: rgba(255, 184, 77, 0.18); }
+.draw-tool:active { transform: scale(0.96); }
+.draw-tool:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.draw-tool[aria-pressed='true'] { border-color: var(--game-draw); background: rgba(255, 184, 77, 0.15); }
+.draw-clear:hover { background: rgba(255, 92, 122, 0.2); color: var(--danger); }
+
+/* Espessura da linha (1 a 100) */
+.draw-thickness { display: flex; align-items: center; gap: var(--space-3); }
+.draw-thick-box {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--surface-2);
+}
+.draw-thick-dot { display: block; border-radius: 50%; background: var(--text); }
+.draw-range { flex: 1; min-width: 0; height: 44px; accent-color: var(--game-draw); cursor: pointer; }
+.draw-thick-label { min-width: 5ch; text-align: right; font-variant-numeric: tabular-nums; color: var(--text-muted); }
+
+/* Placar */
+.draw-score { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+.draw-rank {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg);
+  border-radius: 12px;
+}
+.draw-rank.me { outline: 1px solid var(--primary); }
+.draw-rank-pos { min-width: 2.5ch; font: 700 1.1rem var(--font-title); color: var(--accent); }
+.draw-rank-name { flex: 1; min-width: 0; font-weight: 600; overflow-wrap: anywhere; }
+.draw-rank-gain { color: var(--success); font-weight: 700; animation: draw-pop 400ms ease-out; }
+.draw-rank-total { min-width: 5ch; text-align: right; font: 700 1rem var(--font-title); font-variant-numeric: tabular-nums; }
+.draw-rank .avatar { cursor: default; }
+.draw-rank .avatar:hover { transform: none; }
+
+.draw-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255, 184, 77, 0.15);
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.draw-badge .icon { width: 14px; height: 14px; }
+
+@keyframes draw-pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+/* Chat de palpites */
+.draw-chat { display: grid; gap: var(--space-2); padding: var(--space-3); background: var(--bg); border-radius: var(--radius); }
+.draw-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 220px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+}
+.draw-msg { overflow-wrap: anywhere; font-size: 0.95rem; }
+.draw-msg strong { color: var(--accent); }
+.draw-msg.correct {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--success);
+  font-weight: 600;
+  animation: draw-pop 300ms ease-out;
+}
+
+.draw-guess-form { display: flex; gap: var(--space-2); }
+.draw-guess {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: var(--surface-2);
+  color: var(--text);
+  font: 400 1rem var(--font-body);
+}
+.draw-guess:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
+.draw-guess:disabled { opacity: 0.6; }
+.draw-send {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: var(--primary);
+  color: #fff;
+  cursor: pointer;
+  transition: transform var(--speed), opacity var(--speed);
+}
+.draw-send:active:not(:disabled) { transform: scale(0.94); }
+.draw-send:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+.draw-send:disabled { opacity: 0.5; cursor: default; }
+
+@media (max-width: 480px) {
+  .draw-time { font-size: 1.5rem; }
+  .draw-word { font-size: 2rem; }
+  .draw-pattern { font-size: 1.5rem; }
+  /* No celular, os botões de ferramenta mostram só o ícone (o nome continua para leitores de tela). */
+  .draw-tool { padding: 0 14px; }
+  .draw-tool-label { display: none; }
+  .draw-messages { height: 160px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .draw-rank-gain,
+  .draw-msg.correct { animation: none; }
+}

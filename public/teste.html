@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teste</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/tokens.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+  <button id="botao" class="btn btn-primary">Dizer olá</button>
+  <ul id="lista"></ul>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    document.getElementById('botao').onclick = () => {
+      socket.emit('ola', 'Olá de ' + socket.id);
+    };
+
+    socket.on('ola', (texto) => {
+      const item = document.createElement('li');
+      item.textContent = texto;
+      document.getElementById('lista').appendChild(item);
+    });
+  </script>
+</body>
+<div class="card card-game" style="--game-color: var(--success); max-width: 280px; margin: var(--space-4);">
+  <h3>Stop</h3>
+  <p>Complete as categorias antes dos outros.</p>
+  <button class="btn btn-primary">Jogar</button>
+</div>
+</html>

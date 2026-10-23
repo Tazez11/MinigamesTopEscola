@@ -1,0 +1,336 @@
+.imp {
+  --imp-color: var(--game-impostor, #38bdf8);
+  display: grid;
+  gap: var(--space-3);
+  width: 100%;
+}
+.imp [hidden] { display: none !important; }
+
+.imp .icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.imp-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.imp-round { display: block; font: 700 1.25rem var(--font-title); }
+.imp-time { font: 700 2rem var(--font-title); font-variant-numeric: tabular-nums; }
+.imp.urgent .imp-time { color: var(--danger); }
+
+.imp-bar { height: 8px; border-radius: 999px; background: var(--bg); overflow: hidden; }
+.imp-bar-fill {
+  height: 100%;
+  background: var(--imp-color);
+  transform-origin: left;
+  transition: transform 250ms linear;
+}
+.imp.urgent .imp-bar-fill { background: var(--danger); }
+
+.imp-body { display: grid; gap: var(--space-3); }
+.imp-heading { margin: 0; font-size: 1.25rem; }
+.imp-note { margin: 0; color: var(--text-muted); }
+.imp-winner { margin: 0; font: 700 1.5rem var(--font-title); color: var(--accent); }
+
+/* Configuração: modo e categorias */
+.imp-modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-3); }
+.imp-mode {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  color: var(--text-muted);
+  text-align: left;
+  font: 400 0.9rem var(--font-body);
+  cursor: pointer;
+  transition: border-color var(--speed), background var(--speed), transform var(--speed);
+}
+.imp-mode strong { color: var(--text); font: 700 1.1rem var(--font-title); }
+.imp-mode:hover:not(:disabled) { background: rgba(56, 189, 248, 0.14); }
+.imp-mode:active:not(:disabled) { transform: scale(0.98); }
+.imp-mode:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.imp-mode:disabled { cursor: default; }
+.imp-mode[aria-pressed='true'] { border-color: var(--imp-color); background: rgba(56, 189, 248, 0.12); }
+
+.imp-cats { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.imp-chip {
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font: 600 0.95rem var(--font-body);
+  cursor: pointer;
+  transition: background var(--speed), border-color var(--speed), color var(--speed), transform var(--speed);
+}
+.imp-chip:hover:not(:disabled) { background: rgba(56, 189, 248, 0.14); }
+.imp-chip:active:not(:disabled) { transform: scale(0.96); }
+.imp-chip:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.imp-chip:disabled { cursor: default; }
+.imp-chip[aria-pressed='true'] { background: rgba(56, 189, 248, 0.14); border-color: var(--imp-color); color: var(--text); }
+
+/* Cartão do papel (início da rodada) */
+.imp-role {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: center;
+  padding: var(--space-5) var(--space-3);
+  border: 2px solid var(--imp-color);
+  border-radius: var(--radius);
+  background: rgba(56, 189, 248, 0.08);
+  text-align: center;
+  animation: imp-in 350ms ease-out;
+}
+.imp-role.impostor { border-color: var(--danger); background: rgba(255, 92, 122, 0.1); }
+.imp-role-label { color: var(--text-muted); font-size: 0.9rem; }
+.imp-role-title { margin: 0; font-size: 2rem; color: var(--danger); }
+.imp-role-word { margin: 0; font: 700 2.5rem var(--font-title); color: var(--accent); overflow-wrap: anywhere; }
+.imp-role-text { margin: 0; max-width: 40ch; color: var(--text-muted); }
+
+/* Lembrete do papel durante as dicas */
+.imp-reminder {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: 12px;
+  background: var(--bg);
+}
+.imp-reminder.impostor { border-left: 4px solid var(--danger); }
+.imp-reminder.crew { border-left: 4px solid var(--imp-color); }
+.imp-reminder-label { color: var(--text-muted); font-size: 0.9rem; }
+.imp-reminder-hint { color: var(--text-muted); font-size: 0.85rem; }
+.imp-reminder-word { font: 700 1.25rem var(--font-title); color: var(--accent); overflow-wrap: anywhere; }
+
+/* Campo da dica */
+.imp-clue-form { display: flex; gap: var(--space-2); }
+.imp-clue-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  padding: 0 var(--space-3);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: var(--surface-2);
+  color: var(--text);
+  font: 400 1.1rem var(--font-body);
+}
+.imp-clue-input:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
+.imp-send {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: var(--primary);
+  color: #fff;
+  cursor: pointer;
+  transition: transform var(--speed), opacity var(--speed);
+}
+.imp-send:active:not(:disabled) { transform: scale(0.94); }
+.imp-send:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+.imp-send:disabled { opacity: 0.5; cursor: default; }
+
+/* Mural das dicas */
+.imp-wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: var(--space-3); }
+.imp-card {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: var(--bg);
+  transition: border-color var(--speed);
+}
+.imp-card.active { border-color: var(--imp-color); }
+.imp-card-head { display: flex; align-items: center; gap: var(--space-2); }
+.imp-card-name { flex: 1; min-width: 0; font-weight: 600; overflow-wrap: anywhere; }
+.imp-card .avatar { cursor: default; }
+.imp-card .avatar:hover { transform: none; }
+
+.imp-clue {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  color: var(--text-muted);
+}
+.imp-clue.filled { color: var(--text); font-weight: 600; }
+.imp-clue.writing { border: 1px dashed var(--imp-color); }
+.imp-clue.new { animation: imp-in 300ms ease-out; }
+.imp-clue-lap { font-size: 0.75rem; color: var(--text-muted); }
+.imp-clue-text { overflow-wrap: anywhere; }
+
+/* Placar final */
+.imp-score { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+.imp-rank {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg);
+  border-radius: 12px;
+}
+.imp-rank.me { outline: 1px solid var(--primary); }
+.imp-rank-pos { min-width: 2.5ch; font: 700 1.25rem var(--font-title); color: var(--accent); }
+.imp-rank-name { flex: 1; min-width: 0; font-weight: 600; overflow-wrap: anywhere; }
+.imp-rank-total { font: 700 1.1rem var(--font-title); font-variant-numeric: tabular-nums; }
+.imp-rank .avatar { cursor: default; }
+.imp-rank .avatar:hover { transform: none; }
+
+@keyframes imp-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (max-width: 480px) {
+  .imp-time { font-size: 1.5rem; }
+  .imp-role-word { font-size: 2rem; }
+  .imp-role-title { font-size: 1.6rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .imp-role,
+  .imp-clue.new { animation: none; }
+  .imp-bar-fill { transition: none; }
+}
+
+/* mural mais largo e legível */
+.imp-wall { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+
+/* card clicável (votação) */
+.imp-card.votable { cursor: pointer; }
+.imp-card.votable:hover { border-color: var(--imp-color); transform: translateY(-2px); }
+.imp-card.voted { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--bg)); }
+.imp-card { transition: border-color var(--speed), transform var(--speed), background var(--speed); }
+
+/* seu card destacado */
+.imp-card.me { box-shadow: inset 0 0 0 1px var(--primary); }
+
+.imp-wall { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+.imp-card { transition: border-color var(--speed), transform var(--speed), background var(--speed); }
+.imp-card.me { box-shadow: inset 0 0 0 1px var(--primary); }
+.imp-card.votable { cursor: pointer; }
+.imp-card.votable:hover { border-color: var(--imp-color); transform: translateY(-2px); }
+.imp-card.votable:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.imp-card.voted { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--bg)); }
+
+.imp-badge { font-size: 0.75rem; color: var(--success); white-space: nowrap; }
+
+.imp-reveal {
+  display: grid; gap: var(--space-2); justify-items: center; text-align: center;
+  padding: var(--space-5) var(--space-3);
+  border: 2px solid var(--success); border-radius: var(--radius);
+  background: color-mix(in srgb, var(--success) 10%, transparent);
+  animation: imp-in 350ms ease-out;
+}
+.imp-reveal.escaped { border-color: var(--danger); background: color-mix(in srgb, var(--danger) 10%, transparent); }
+.imp-tally { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-1); color: var(--text-muted); }
+
+/* cards ocupam toda a largura */
+.imp-wall { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+/* card de quem está jogando: brilho pulsante */
+.imp-card.active {
+  border-color: var(--imp-color);
+  background: color-mix(in srgb, var(--imp-color) 10%, var(--bg));
+  animation: imp-pulse 1.6s ease-in-out infinite;
+}
+@keyframes imp-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--imp-color) 45%, transparent); }
+  50% { box-shadow: 0 0 0 6px transparent; }
+}
+
+/* dica sendo escrita: texto piscando */
+.imp-clue.writing { border-color: var(--imp-color); color: var(--imp-color); }
+.imp-clue.writing .imp-clue-text { animation: imp-blink 1.2s ease-in-out infinite; }
+@keyframes imp-blink { 50% { opacity: 0.4; } }
+
+/* espaços vazios mais discretos, dicas preenchidas em destaque */
+.imp-clue:not(.filled):not(.writing) { opacity: 0.45; }
+.imp-clue.filled { background: color-mix(in srgb, var(--imp-color) 14%, var(--surface-2)); }
+
+/* avatar maior e nome com mais presença */
+.imp-card-head .avatar { width: 40px; height: 40px; }
+.imp-card-name { font-family: var(--font-title); font-size: 1.05rem; }
+
+/* título do turno como faixa de destaque */
+.imp-heading {
+  padding: var(--space-2) var(--space-3);
+  border-left: 4px solid var(--imp-color);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--imp-color) 10%, transparent);
+}
+
+.imp-turn {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 2px solid var(--imp-color);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--imp-color) 10%, var(--surface));
+  animation: imp-in 300ms ease-out;
+}
+.imp-turn-title { margin: 0; font-size: 1.4rem; background: none; border: 0; padding: 0; }
+.imp-turn-hint { margin: 0; color: var(--text-muted); font-size: 0.9rem; }
+
+.imp-clue-field { position: relative; flex: 1; min-width: 0; display: flex; }
+.imp-clue-field .imp-clue-input {
+  width: 100%;
+  min-height: 56px;
+  padding-right: 64px;
+  font: 600 1.25rem var(--font-body);
+  border: 2px solid transparent;
+  background: var(--bg);
+  transition: border-color var(--speed);
+}
+.imp-clue-field .imp-clue-input:focus { outline: none; border-color: var(--imp-color); }
+.imp-clue-count {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.imp-send {
+  width: auto;
+  height: 56px;
+  padding: 0 var(--space-4);
+  gap: var(--space-2);
+  display: flex;
+  align-items: center;
+  font: 700 1rem var(--font-title);
+  background: var(--imp-color);
+  color: #0F1020;
+}
+.imp-send:hover:not(:disabled) { filter: brightness(1.1); }
+
+.imp-clue-form.shake { animation: imp-shake 300ms; }
+@keyframes imp-shake {
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+@media (max-width: 480px) {
+  .imp-clue-form { flex-direction: column; }
+  .imp-send { justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .imp-clue-form.shake, .imp-turn { animation: none; }
+}
